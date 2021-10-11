@@ -1,0 +1,12 @@
+Package: xiangqi
+Title: Chinese Chess Utilities
+Version: 0.0.0.9000
+Authors@R: 
+    person("Donald", "Seinen", , "2869830202@qq.com", role = c("aut", "cre"),
+           comment = c(ORCID = "YOUR-ORCID-ID"))
+Description: Set of tools to analyze games.
+License: MIT + file LICENSE
+Encoding: UTF-8
+LazyData: true
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.1.2
