@@ -13,6 +13,8 @@ RoxygenNote: 7.1.2
 URL: https://github.com/D-Se/xiangqi
 BugReports: https://github.com/D-Se/xiangqi/issues
 Suggests: 
+    knitr,
+    rmarkdown,
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
 Imports: 
@@ -22,3 +24,4 @@ Imports:
     stringi
 Depends: 
     R (>= 2.10)
+VignetteBuilder: knitr

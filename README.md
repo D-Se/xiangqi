@@ -5,22 +5,19 @@
 ![](http://cranlogs-dev.r-pkg.org/badges/%3Cpackagename%3E)
 <!-- badges: end -->
 
-Xiangqi is an 
+The xiangqi is a consistent set of tools for Chinese chess (中国象棋) players to
+analyze and archive games, and a virtual coach.
+
+Detailed explanation of xiangqi functions are available by running these commands in R:
+
+`vignette("analyze")`
 
 ## Installation
 
-You can install the released version of xiangqi from [CRAN](https://CRAN.R-project.org) with:
+Within R, or RStudio IDE, run the command
 
-``` r
-install.packages("xiangqi")
-```
+`devtools::install_github("D-se/turbokit")`
 
-## Example
+# Cheat Sheet
 
-This is a basic example which shows you how to solve a common problem:
-
-``` r
-library(xiangqi)
-## basic example code
-```
-
+[![](images/cheatsheetthumb-01.png)](https://github.com/D-Se/turbokitcheatsheet/blob/main/turbokit.pdf)

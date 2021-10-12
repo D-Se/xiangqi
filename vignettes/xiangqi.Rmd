@@ -1,0 +1,31 @@
+---
+title: "xiangqi"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{xiangqi}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+Xiangqi, or Chinese chess, is a 2-player zero-sum chess variant popular in Asia,
+with an estimated player base of over a *billion*, making it arguebaly the most popular board game in the world.
+
+
+# Board
+
+# Pieces
+
+# Rules
+
+# 
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(xiangqi)
+```
