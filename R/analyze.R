@@ -1,7 +1,12 @@
 #' Analyze a xiangqi game with a UCCI-compliant engine
 #'
+#' @param moves chr vector of length n moves in lan format **h2he2**
+#' @param engine path to UCCI engine to use for obtaining evaluations
+#' @param multipv int how many principle variations should be returned
+#'
 analyze_game <- function(moves, engine, multipv = 1){
-  tmcn::setchs()
+  old_loc <- Sys.getlocale(category = "LC_CTYPE")
+  Sys.setlocale(category = "LC_CTYPE", locale = "chs")
   if (is.character(engine)) e <- uci_engine(engine) else e <- engine
   tgt <- detect_input_type(moves)
   if (tgt == "san"){

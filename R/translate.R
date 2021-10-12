@@ -26,7 +26,8 @@
 #' translate(lan)
 #' translate(san, input_type = "san")
 translate <- function(moves, target = "auto", pos = "startpos"){
-  if (identical(target, "auto")) target <- tgt(moves[1])
+  target <- match.arg(target, c("auto", "san", "lan"))
+  if (target == "auto") target <- tgt(moves[1])
   old_loc <- Sys.getlocale(category = "LC_CTYPE")
   Sys.setlocale(category = "LC_CTYPE", locale = "chs")
   if (identical(pos, "startpos")) pos <- STARTPOS
@@ -51,15 +52,10 @@ translate <- function(moves, target = "auto", pos = "startpos"){
 
 
 tgt <- function(move){
-  switch(substr(move, 1, 1),
-
-  )
-
-  tryCatch()
-  substr(moves[1])
-  if (length(moves) > 1) moves <- moves[1]
-  if (stringi::stri_detect_regex(moves, "^[a-z]", max_count = 1)) "san" else "lan"
+  if (stringi::stri_detect_regex(substr(move, 1, 1), "^[a-z]", max_count = 1)) {
+    "lan"
+  } else{
+    "san"
+  }
 }
 
-tgt <- if (stringi::stri_detect_regex(
-  moves[1], "^[a-z]", max_count = 1)) {"lan"} else{ "san"}

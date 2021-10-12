@@ -19,3 +19,6 @@ The notation system used in this position function is the one described by
 the Universal Chinese Chess Protocol \strong{UCCI}, that which most xiangqi engines
 use as the internal structure.
 }
+\examples{
+position <- moves[1:49] \%>\% translate_notation("san") \%>\% clean_moves() \%>\% position_move()
+}

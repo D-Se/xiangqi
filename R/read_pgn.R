@@ -27,7 +27,7 @@ read_pgn <- function(path, keep = TRUE){
 #'
 #' @return list of length n games
 read_pgn_bulk <- function(path){
-  game <- readLines("bulk-dpxq_san.pgn")
+  game <- readLines(path)
   ind <- which(stringi::stri_detect_regex(game,
                                           pattern = "^\\d.", negate = FALSE))
   ll <- vector(mode = "list", length = length(ind))

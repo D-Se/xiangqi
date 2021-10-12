@@ -4,14 +4,14 @@
 \alias{translate}
 \title{Translate move list to other notation systems}
 \usage{
-translate(moves, pos = "startpos")
+translate(moves, target = "auto", pos = "startpos")
 }
 \arguments{
 \item{moves}{chr vec of n elements equal to n moves}
 
-\item{pos}{list of length 90. See \code{position_move} to generate positions.}
+\item{target}{one of \code{c("san", "lan")}}
 
-\item{input_type}{one of \code{c("san", "lan")}}
+\item{pos}{list of length 90. See \code{position_move} to generate positions.}
 }
 \value{
 chr vec of parsed notation, length 1.
