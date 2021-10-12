@@ -2,9 +2,10 @@
 # xiangqi
 
 <!-- badges: start -->
+![](http://cranlogs-dev.r-pkg.org/badges/%3Cpackagename%3E)
 <!-- badges: end -->
 
-The goal of xiangqi is to ...
+Xiangqi is an 
 
 ## Installation
 
