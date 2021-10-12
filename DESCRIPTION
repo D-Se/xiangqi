@@ -12,3 +12,11 @@ Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.2
 URL: https://github.com/D-Se/xiangqi
 BugReports: https://github.com/D-Se/xiangqi/issues
+Suggests: 
+    testthat (>= 3.0.0)
+Config/testthat/edition: 3
+Imports: 
+    magrittr,
+    bigchess,
+    rlang,
+    stringi
