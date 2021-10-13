@@ -1,4 +1,4 @@
-
+#' Function to create a repository of games, with many games in one file.
 write_pgn_bulk <- function(path){
   path <- "F:\\Masters_D\\"
   files <- list.files(path = path)

@@ -37,3 +37,26 @@ read_pgn_bulk <- function(path){
     ll[[i]] <- game[ind[1]+1:ind[2]]
   }
 }
+
+library(tidyverse)
+
+
+
+rm(dt)
+
+file.path(file.choose())
+
+game <- readLines("C:\\Users\\D\\Documents\\R\\Xiangqi Cheat\\bulk-dpxq_san.pgn")
+
+game <- stringi::stri_remove_empty(game)
+
+read_pgn_bulk <- function(path){
+  game <- readLines(path)
+  x <- split(game, cut(seq_along(game), (length(game) / 14), labels = FALSE))
+  lapply(x, )
+}
+
+y <- split(game, cut(seq_along(game), (length(game) / 14), labels = FALSE))
+y[[1]]
+y[[1]]
+(length(game) / 14)

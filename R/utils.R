@@ -467,3 +467,42 @@ get_dir <- function(r1, r2, p){
     }
   }
 }
+
+# TODO implement no-piece captured counter & move counter
+# position to FEN string  "rnbakabnr/9/1c5c1/p1p1p1p1p/9/9/P1P1P1P1P/1C5C1/9/RNBAKABNR"
+make_fen <- function(pos){
+  x <- vector(mode = "list", length = 10L)
+  x <- unlist(pos, use.names = F)
+  x <- split(x, cut(seq_along(x), 10L, labels = FALSE)) # row by row
+  x <- lapply(x, function(x){
+    y <- x[-1L] != x[-9L] # rle function stripped
+    i <-  c(which(y), 9L)
+    x <- list(lengths = diff(c(0L, i)),
+              values = x[i])
+    ind <- .Internal(which(x[[2]] == 0L))
+    string <- t_fen(as.character(x[[2]]))
+    char_ind <- as.character(x[[1]][ind])
+    string[ind] <- char_ind
+    string
+  })
+  stringi::stri_c_list(x, collapse = "/")
+}
+
+t_fen <- Vectorize(function(ind){
+  switch(ind,
+         "0" = "0",
+         "1" = "P",
+         "-1" = "p",
+         "2" = "C",
+         "-2" = "c",
+         "3" = "R",
+         "-3" = "r",
+         "4" = "N",
+         "-4" = "n",
+         "5" = "B",
+         "-5" = "b",
+         "6" = "A",
+         "-6" = "a",
+         "7" = "K",
+         "-7" = "k")
+})

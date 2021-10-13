@@ -50,7 +50,6 @@ translate <- function(moves, target = "auto", pos = "startpos"){
   stringi::stri_c_list(ll, collapse =  " ")
 }
 
-
 tgt <- function(move){
   if (stringi::stri_detect_regex(substr(move, 1, 1), "^[a-z]", max_count = 1)) {
     "lan"
@@ -58,4 +57,3 @@ tgt <- function(move){
     "san"
   }
 }
-
