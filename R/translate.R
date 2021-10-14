@@ -26,7 +26,7 @@
 #' translate(lan)
 #' translate(san, input_type = "san")
 translate <- function(moves, target = "auto", pos = "startpos"){
-  target <- match.arg(target, c("auto", "san", "lan"))
+  target <- match.arg(target, c("auto", "san", "lan", "xiangqi"))
   if (target == "auto") target <- tgt(moves[1])
   old_loc <- Sys.getlocale(category = "LC_CTYPE")
   Sys.setlocale(category = "LC_CTYPE", locale = "chs")
@@ -45,7 +45,7 @@ translate <- function(moves, target = "auto", pos = "startpos"){
         position_move(ll[[i]], pos)
       }
     }
-  }, error = function(e) message(paste("error in move: ", i, moves[i])))
+  }, error = function(e) message(paste("Translation error in move: ", i, moves[i])))
   Sys.setlocale(category = "LC_CTYPE", old_loc)
   stringi::stri_c_list(ll, collapse =  " ")
 }

@@ -16,7 +16,7 @@ Detailed explanation of xiangqi functions are available by running these command
 
 Within R, or RStudio IDE, run the command
 
-`devtools::install_github("D-se/turbokit")`
+`devtools::install_github("D-se/xiangqi")`
 
 # Cheat Sheet
 

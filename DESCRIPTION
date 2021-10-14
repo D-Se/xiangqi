@@ -21,7 +21,12 @@ Imports:
     magrittr,
     bigchess,
     rlang,
-    stringi
+    stringi,
+    dplyr,
+    ggplot2,
+    ggpmisc,
+    RSelenium,
+    tidyr
 Depends: 
     R (>= 2.10)
 VignetteBuilder: knitr

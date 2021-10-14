@@ -13,8 +13,9 @@ clean_moves <- function(moves){
       ), split = " ", fixed = T
     ), use.names = FALSE
   )
-  # some iles end in * to indicate resignation or include m for comments
-  if (stringi::stri_detect_regex(moves[length(moves)],
+  # some files end in * to indicate resignation or include m for comments
+  # in game analysis, NA is returned when checkmate is possible
+  if (!is.na(moves) && stringi::stri_detect_regex(moves[length(moves)],
                                  pattern = "[[:punct:]]|=")) {
     moves[-length(moves)]
   } else {

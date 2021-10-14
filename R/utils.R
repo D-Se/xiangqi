@@ -468,9 +468,15 @@ get_dir <- function(r1, r2, p){
   }
 }
 
+
+
+#' @param p color
+#' @param n move nr
 # TODO implement no-piece captured counter & move counter
 # position to FEN string  "rnbakabnr/9/1c5c1/p1p1p1p1p/9/9/P1P1P1P1P/1C5C1/9/RNBAKABNR"
-make_fen <- function(pos){
+make_fen <- function(pos, p, n){
+  p <- if (p == 1) "w" else "b"
+  pos <- pos[FEN]
   x <- vector(mode = "list", length = 10L)
   x <- unlist(pos, use.names = F)
   x <- split(x, cut(seq_along(x), 10L, labels = FALSE)) # row by row
@@ -485,7 +491,7 @@ make_fen <- function(pos){
     string[ind] <- char_ind
     string
   })
-  stringi::stri_c_list(x, collapse = "/")
+  paste(stringi::stri_c_list(x, collapse = "/"), p, "- - 0", n, sep = " ")
 }
 
 t_fen <- Vectorize(function(ind){
@@ -506,3 +512,267 @@ t_fen <- Vectorize(function(ind){
          "7" = "K",
          "-7" = "k")
 })
+
+
+### TODO: Reduce the code for make_xiangqi
+# make_fen(position_move(test[1:10]), p = 1, n = 10)
+make_xiangqi <- function(move, pos, p){
+  ptrns <- c("^[cCrRkK]", "^[hH]", "^[eEaA]", "^[pP]", "^[+-]")
+  fp <- which(stringi::stri_detect_regex(move, pattern = ptrns, max_count = 1, negate = F))
+  sm <- strsplit(move,"")[[1]]
+  # 1. pawn 2. canon 3. rook 4. horse 5. elephant 6. advisor 7. general
+  pval <- t_piece_xq(sm[1], p)
+  sq <- names(which(pos == pval)) # indices containing piece of interest
+  dir <- t_dir_xq(sm[3])
+  switch(fp,
+         "1" = { # orthogonal movement
+           i <- sq[which(substr(sq, 1,1) == t_col_xq(sm[2], p))]
+           c1 <- substr(i, 1, 1)
+           r1 <- substr(i, 2, 2)
+           c2 <- switch(dir,
+                        "forward" = c1,
+                        "backward" = c1,
+                        "lateral" = t_col_xq(sm[4], p))
+           r2 <- switch(dir,
+                        "forward" = dir_fwd_xq(r1, sm[4], p),
+                        "backward" = dir_bck_xq(r1, sm[4], p),
+                        "lateral" = r1)
+         },
+         "2" = { # diagonal movement
+           c1 <- t_col_xq(sm[2], p)
+           c2 <- t_col_xq(sm[4], p)
+           r1 <- substr(sq[which(substr(sq, 1, 1) == c1)], 2, 2)
+           r2 <- horse_move_xq(c1, c2, r1, p, dir)},
+         "3" = { # advisor / elephant move
+           c1 <- t_col_xq(sm[2], p)
+           c2 <- t_col_xq(sm[4], p)
+           i <- names(pos[which(pos == pval)])
+           r1 <-
+             if (length(i) > 1 && length(unique(substr(sq, 1,1))) > 1) {
+               substr(sq[which(substr(i, 1, 1) == c1)], 2, 2)
+             } else {
+               diag_test_xq(sq, pval, dir, p)
+             }
+           r2 <- diagonal_move_xq(r1, pval, dir, p)
+         },
+         "4" = {  # pawn moves
+           c1 <- t_col_xq(sm[2], p)
+           c2 <- if (dir == "forward") c1 else t_col_xq(sm[4], p)
+           r1 <- substr(sq[which(substr(sq, 1, 1) == c1)], 2, 2)
+           r2 <- switch(dir,
+                        "forward" = dir_fwd_xq(r1, sm[4], p),
+                        "lateral" = r1)
+           },
+         "5" = { # pieces on the same file
+           pval <- t_piece_xq(sm[2], p)
+           sq <- names(pos[which(pos == pval)])
+           x <- as.integer(substr(sq, 2, 2))
+           r1 <- if (p == 1) { # returns integer, coerced to character in end
+             if (sm[1] == "+") x[which(x == max(x))] else x[which(x == min(x))]
+           } else {
+             if (sm[1] == "-") x[which(x == min(x))] else x[which(x == max(x))]
+           }
+           c1 <- substr(sq[which(x == r1)], 1, 1)
+           c2 <-
+             if (dir=="lateral"||abs(pval) == 4) t_col_xq(sm[4], p) else c1
+           r2 <- switch(as.character(abs(pval)),
+                        "1" = switch(dir,
+                                     "forward" = dir_fwd_xq(r1, sm[4], p),
+                                     "lateral" = r1),
+                        "2" = switch(dir,
+                                     "forward" = dir_fwd_xq(
+                                       r1, sm[4], p),
+                                     "backward" = dir_bck_xq(
+                                       r1, sm[4], p),
+                                     "lateral" = r1
+                        ),
+                        "3" = switch(dir,
+                                     "forward" = dir_fwd_xq(
+                                       r1, sm[4], p),
+                                     "backward" = dir_bck_xq(
+                                       r1, sm[4], p),
+                                     "lateral" = r1),
+                        "4" = horse_move_xq(c1, c2, r1, p, dir),
+                        "5" = diagonal_move_xq(r1, pval, dir, p),
+                        "6" = diagonal_move_xq(r1, pval, dir, p)
+           )
+         }
+  )
+  paste0(c1,r1,c2,r2)
+}
+
+t_col_xq <- function(index, p){
+  if (p == 1) {
+    switch(index,
+           # N = 2586705
+           "5" = "e", # 362217
+           "7" = "c", # 333487
+           "2" = "h", # 330484
+           "8" = "b", # 333084
+           "3" = "g", # 317999
+           "6" = "d", # 256164
+           "4" = "f", # 247073
+           "9" = "a", # 226310
+           "1" = "i" # 179887
+    )
+  } else {
+    switch(index,
+           "3" = "c", # 328055
+           "7" = "g", # 327831
+           "8" = "h", # 327607
+           "2" = "b", # 321326
+           "5" = "e", # 320640
+           "4" = "d", # 269091
+           "6" = "f", # 233653
+           "1" = "a", # 221565
+           "9" = "i" # 205135
+    )
+  }
+}
+t_nr_xq <- function(index, p){
+  if (p == 1) {
+    switch(index,
+           "5" = 5, # 362217
+           "7" = 7, # 333487
+           "2" = 2, # 330484
+           "8" = 8, # 333084
+           "3" = 3, # 317999
+           "6" = 6, # 256164
+           "4" = 4, # 247073
+           "9" = 9, # 226310
+           "1" = 1, # 179887
+    )
+  } else {
+    switch(index,
+           "3" = 3, # 328055
+           "7" = 7, # 327831
+           "8" = 8, # 327607
+           "2" = 2, # 321326
+           "5" = 5, # 320640
+           "4" = 4, # 269091
+           "6" = 6, # 233653
+           "1" = 1, # 221565
+           "9" = 9 # 205135
+    )
+  }
+}
+t_piece_xq <- function(index, p){
+  if (p == 1) {
+    # optimized for grandmaster pieces moved / game N = 65k
+    switch(index,
+           "R" = 3, # 12.2
+           "C" = 2, # 9.22
+           "H" = 4, # 9.03
+           "P" = 1, # 5.66
+           "K" = 7, # 2.71
+           "E" = 5, # 2.28
+           "A" = 6 # 1.95
+    ) # 1. pawn 2. canon 3 rook 4 horse 5 elephant 6 advisor 7 general
+  } else {
+    switch(index,
+           "r" = -3, # 11.6
+           "c" = -2, # 9.16
+           "h" = -4, # 8.98
+           "p" = -1, # 5.17
+           "k" = -7, #3.07
+           "e" = -5, # 2.55,
+           "a" = -6 # 2.15
+    )
+  }
+}
+t_dir_xq <- function(index){
+  switch(index,
+         "+" = "forward",
+         "=" = "lateral",
+         "-" = "backward",
+  )
+}
+horse_move_xq <- function(c1, c2, r1, p, dir){
+  r1 <- as.integer(r1)
+  as.character(
+    if (abs(CN[c2]-CN[c1]) == 1) {
+      if (dir == "forward") {
+        if (p == 1) r1+2 else r1-2
+      } else { # backward
+        if (p == 1) r1-2 else r1+2
+      }
+    } else { # abs value difference of 2
+      if (dir == "forward") {
+        if (p == 1) r1+1 else r1-1
+      } else { # backward
+        if (p == 1) r1-1 else r1+1
+      }
+    }
+  )
+}
+dir_fwd_xq <- function(index, n, p){
+  index <- as.integer(index)
+  as.character(
+    if (p == 1) {
+      index + t_nr_xq(n, p)
+    } else {
+      index - t_nr_xq(n, p)
+    }
+  )
+}
+dir_bck_xq <- function(index, n, p){
+  index <- as.integer(index)
+  as.character(
+    if (p == 1) {
+      index - t_nr_xq(n, p)
+    } else {
+      index + t_nr_xq(n, p)
+    }
+  )
+}
+diagonal_move_xq <- function(r1, pval, dir, p){
+  r1 <- as.integer(r1)
+  as.character(
+    if (abs(pval) == 5) { # elephant move
+      if (dir == "forward") {
+        if (p == 1) r1+2 else r1-2
+      } else { # backward elephant
+        if (p == 1) r1-2 else r1+2
+      }
+    } else { # advisor move
+      if (dir == "forward") {
+        if (p == 1) r1+1 else r1-1
+      } else { # backward elephant
+        if (p == 1) r1-1 else r1+1
+      }
+    }
+  )
+}
+# process of elimination for when two pieces are on the same file
+diag_test_xq <- function(index, pval, dir, p){
+  x <- as.integer(substr(index, 2, 2))
+  as.character(
+    switch(dir,
+           "forward" = {
+             switch(as.character(p),
+                    "1" = {
+                      switch(as.character(pval),
+                             "5" = x[!x + 2 > 4],
+                             "6" = x[!x + 1 > 2])
+                    },
+                    "-1" = {
+                      switch(as.character(pval),
+                             "-5" = x[!x - 2 < 5],
+                             "-6" = x[!x - 1 < 7])
+                    })
+           },
+           "backward" = {
+             switch(as.character(p),
+                    "1" = {
+                      switch(as.character(pval),
+                             "5" = x[!x - 2 < 0],
+                             "6" = x[!x - 1 < 0])
+                    },
+                    "-1" = {
+                      switch(as.character(pval),
+                             "-5" = x[!x + 2 > 9],
+                             "-6" = x[!x + 1 > 9])
+                    })
+           })
+  )
+}

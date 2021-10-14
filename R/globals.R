@@ -1,3 +1,4 @@
+Sys.setlocale(category = "LC_CTYPE", locale = "chs")
 # initial board positionusing Universal Chinese Chess Protocol indices
 # Piece values:
 # 1. pawn 2. canon 3 rook 4 horse 5 elephant 6 advisor 7 general
