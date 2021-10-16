@@ -1,3 +1,6 @@
+
+# make_san ----------------------------------------------------------------
+
 # 炮二平五 (san) to h2e2 (UCI)
 # *input: chr vector of length 1 without whitespaces*
 # bench > ~24 ms for 150 move game
@@ -262,6 +265,9 @@ diag_test <- function(index, pval, dir, p){
 }
 
 
+# make_lan ----------------------------------------------------------------
+
+
 # h2e2 (UCI) (san) to 炮二平五 (san)
 #' *input: chr vector of length 1 without whitespaces*
 make_lan <- function(move, pos, p){
@@ -470,28 +476,72 @@ get_dir <- function(r1, r2, p){
 
 
 
-#' @param p color
-#' @param n move nr
-# TODO implement no-piece captured counter & move counter
+
+# make_fen ----------------------------------------------------------------
+### TODO: make no-capture counter
+
 # position to FEN string  "rnbakabnr/9/1c5c1/p1p1p1p1p/9/9/P1P1P1P1P/1C5C1/9/RNBAKABNR"
-make_fen <- function(pos, p, n){
+# see https://www.chessprogramming.org/Forsyth-Edwards_Notation
+make_fen2 <- function(pos, p, cloud_db = TRUE, ...){
   p <- if (p == 1) "w" else "b"
   pos <- pos[FEN]
   x <- vector(mode = "list", length = 10L)
   x <- unlist(pos, use.names = F)
   x <- split(x, cut(seq_along(x), 10L, labels = FALSE)) # row by row
-  x <- lapply(x, function(x){
+  x <- lapply(x, function(x){ # rowwise counting of piece sequences
     y <- x[-1L] != x[-9L] # rle function stripped
-    i <-  c(which(y), 9L)
+    i <- c(which(y), 9L)
     x <- list(lengths = diff(c(0L, i)),
               values = x[i])
-    ind <- .Internal(which(x[[2]] == 0L))
+    ind_0 <- .Internal(which(x[[2]] == 0L)) # identify zeros to count / replace
+    ind_ix <- which(x[[2]] != 0L)
+    ind_ix <- ind_ix[which(x[[1]][ind_ix] > 1)]
+    if (!rlang::is_empty(ind_ix)) { # pieces of same color on adjecent files
+      ind_vx <- t_fen(as.character((x[[2]][ind_ix])))
+    }
     string <- t_fen(as.character(x[[2]]))
-    char_ind <- as.character(x[[1]][ind])
-    string[ind] <- char_ind
+    char_ind <- as.character(x[[1]][ind_0])
+    string[ind_0] <- char_ind
+    if (exists(x = "ind_vx")) {
+      for (i in seq_along(ind_vx)) { ### TODO: for-loop not necessary here?
+        string <- append(string,
+                         values = ind_vx[i],
+                         which(string == ind_vx[i]) - 1)
+      }
+    }
     string
   })
-  paste(stringi::stri_c_list(x, collapse = "/"), p, "- - 0", n, sep = " ")
+  if (cloud_db) { # fen for chessdb.cn cloud book search, %20 is a space
+    paste0(stringi::stri_c_list(x, collapse = "/"), "%20", p)
+  } else { # ... is used to attach a move counter, as in cyclone engine
+    paste(stringi::stri_c_list(x, collapse = "/"), p, "- - 0", n, sep = " ")
+  }
+}
+
+# placeholder in case new make_fen2 breaks
+make_fen <- function(pos, p, cloud_db = TRUE, ...){
+  p <- if (p == 1) "w" else "b"
+  pos <- pos[FEN]
+  x <- vector(mode = "list", length = 10L)
+  x <- unlist(pos, use.names = F)
+  x <- split(x, cut(seq_along(x), 10L, labels = FALSE)) # row by row
+  x <- x$`3`
+  x <- lapply(x, function(x){
+    y <- x[-1L] != x[-9L] # rle function stripped
+    i <- c(which(y), 9L)
+    x <- list(lengths = diff(c(0L, i)),
+              values = x[i])
+    ind_0 <- .Internal(which(x[[2]] == 0L))
+    string <- t_fen(as.character(x[[2]]))
+    char_ind <- as.character(x[[1]][ind_0])
+    string[ind_0] <- char_ind
+    string
+  })
+  if (cloud_db) { # fen for chessdb.cn cloud book search
+    paste0(stringi::stri_c_list(x, collapse = "/"), "%20", p)
+  } else { # ... is used to attach a move counter, as in cyclone engine
+    paste(stringi::stri_c_list(x, collapse = "/"), p, "- - 0", n, sep = " ")
+  }
 }
 
 t_fen <- Vectorize(function(ind){
@@ -512,7 +562,6 @@ t_fen <- Vectorize(function(ind){
          "7" = "K",
          "-7" = "k")
 })
-
 
 ### TODO: Reduce the code for make_xiangqi
 # make_fen(position_move(test[1:10]), p = 1, n = 10)

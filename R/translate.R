@@ -7,7 +7,12 @@
 #' @description
 #' `r lifecycle::badge('experimental')`
 #'
-#' #' \tabular{lllll}{
+#' @section Notation systems
+#' Many different notation systems are in use. the `translate()` function tries
+#' it best to guess which system is being input, and performs the necessary
+#' translation steps to arrive at a different notation system.
+#'
+#'  \tabular{lllll}{
 #'  1\tab \strong{pawn} \tab 兵 卒 \tab P\cr
 #'  2\tab \strong{canon} \tab 炮 \tab C\cr
 #'  3\tab \strong{rook} \tab 车 \tab R\cr
@@ -16,6 +21,10 @@
 #'  5\tab \strong{advisor} \tab 仕 士 \tab A \cr
 #'  5\tab \strong{general} \tab 帅 将 \tab K \cr
 #' }
+#'
+#' @section Common sources for errors
+#' Different notation systems use different character encodings. Much xiangqi-related
+#' material is formatted such that cross-platform compatibility becomes an issue.
 #'
 #' @return chr vec of parsed notation, length 1.
 #' @export

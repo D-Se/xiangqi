@@ -24,9 +24,9 @@ Imports:
     stringi,
     dplyr,
     ggplot2,
-    ggpmisc,
     RSelenium,
-    tidyr
+    tidyr,
+    rvest
 Depends: 
     R (>= 2.10)
 VignetteBuilder: knitr

@@ -1,8 +1,9 @@
 #' Function to create a repository of games, with many games in one file.
-write_pgn_bulk <- function(path){
-  path <- "F:\\Masters_D\\"
+#'
+#' @param path path to directory to
+# path <- "F:\\Masters_D\\"
+write_pgn_bulk <- function(path, file){
   files <- list.files(path = path)
-
   ll <- vector(mode = "list", length = length(files))
   names(ll) <- files
 
@@ -55,5 +56,5 @@ write_pgn_bulk <- function(path){
   ll <- ll[-error_files]
   long <- unlist(ll, use.names = F)
   #vroom::vroom_write_lines(long, "bulk-dpxq_san.pgn", append = T, )
-  #writeLines(long, "bulk-dpxq_san.pgn")
+  writeLines(long, con = path)
 }
