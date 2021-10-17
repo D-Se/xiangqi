@@ -45,7 +45,7 @@ translate <- function(moves, target = "auto", pos = "startpos"){
   f <- rlang::expr(!!paste0("make_", target))
   tryCatch({
     for(i in seq_along(moves)){
-      # lan (h2e2) to san (炮二平五) or reverse
+      # lan (h2e2) to san (炮二平五) or reverse. Helpers in util.R
       ll[[i]] <- rlang::eval_tidy(rlang::expr((!!f)(moves[i], pos, p)))
       p <- -p
       pos <- if (target == "lan") {

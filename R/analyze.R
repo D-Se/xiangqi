@@ -35,6 +35,8 @@ analyze_game <- function(moves, engine, multipv = 1){
   }
   message("Analyzing moves")
   p <- 1
+  #e <- bigchess::uci_position(e, moves = "h2e2", startpos = TRUE)
+  #e <- bigchess::uci_go(e, infinite = T, stoptime = 2)
   for (i in seq_along(lan)) {
     t <- list()
     t$curr_move_lan <- lan[i]
@@ -47,21 +49,27 @@ analyze_game <- function(moves, engine, multipv = 1){
                                                "MultiPV", "value", multipv))
     }
     e <- bigchess::uci_position(e, moves = t$curpos_lan, startpos = TRUE)
-    e <- bigchess::uci_go(e, depth = 10)
+    ### TODO: test minimum 15, else engine doesnt put out lines?!! fix.
+    e <- bigchess::uci_go(e, depth = 15)
+    # Reading the temp log empties the temp log, only 1 chance to read it.
+    # Sometimes the engine goes to specified extremely fast, if there is for
+    # example a forced checkmate sequence possible. In that situation an erroneous
+    # output is recorded from the prompt, resulting in integer(0)
+    #t$ucilog <- e$temp
     t$ucilog <- uci_read(e)$temp
-    #invisible(new_uci_read(e))
     t$score <- uci_parse(t$ucilog, "score")
+    if (rlang::is_empty(t$score)) t$score <- 0 # bandaid fix
     if (i %% 2 != 0) t$score <- t$score * -1
     t$bestmove <- uci_parse(t$ucilog)
     t$bestline_lan <- uci_parse(t$ucilog, "bestline")
     l2s <- stringi::stri_c(t$curpos_lan, t$bestline_lan, sep = " ") %>%
       clean_moves %>%
-      translate("lan")
+      translate(target = "lan")
 
     t$bestline_san <- substr(l2s, nchar(t$curpos_san) + 2, nchar(l2s))
     t$bestmove_san <- substr(t$bestline_san, 1, 4)
     t$comment <- ""
-    t$fen = make_fen(position_move(clean_moves(t$curpos_lan)), p = p, n = i)
+    t$fen = make_fen2(position_move(clean_moves(t$curpos_lan)), p = p, n = i)
     e$temp <- "x"
     pr(message = sprintf("Added %s", lan[i]))
     p <- -p
@@ -71,9 +79,6 @@ analyze_game <- function(moves, engine, multipv = 1){
   message("Done!")
   ll
 }
-
-#games <- read_pgn_bulk("C:\\Users\\D\\Documents\\R\\Xiangqi Cheat\\bulk-dpxq_san.pgn")
-#test <- analyze_game(games[[1]]$Moves, engine = eng, 1)
 
 # Helpers -----------------------------------------------------------------
 

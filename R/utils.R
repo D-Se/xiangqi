@@ -270,6 +270,7 @@ diag_test <- function(index, pval, dir, p){
 
 # h2e2 (UCI) (san) to 炮二平五 (san)
 #' *input: chr vector of length 1 without whitespaces*
+#' TODO logic pass, restructure func.
 make_lan <- function(move, pos, p){
   sq1 <- substr(move, 1, 2)
   sm <- strsplit(move, "")[[1]]
@@ -563,10 +564,13 @@ t_fen <- Vectorize(function(ind){
          "-7" = "k")
 })
 
+
+# make_xiangqi ------------------------------------------------------------
+
 ### TODO: Reduce the code for make_xiangqi
 # make_fen(position_move(test[1:10]), p = 1, n = 10)
 make_xiangqi <- function(move, pos, p){
-  ptrns <- c("^[cCrRkK]", "^[hH]", "^[eEaA]", "^[pP]", "^[+-]")
+  ptrns <- c("^[cCrRkK]", "^[hH]", "^[eEaA]", "^[pP]", "^.[+-]") # 2nd pos
   fp <- which(stringi::stri_detect_regex(move, pattern = ptrns, max_count = 1, negate = F))
   sm <- strsplit(move,"")[[1]]
   # 1. pawn 2. canon 3. rook 4. horse 5. elephant 6. advisor 7. general
@@ -613,6 +617,7 @@ make_xiangqi <- function(move, pos, p){
                         "lateral" = r1)
            },
          "5" = { # pieces on the same file
+           sm <- sm[c(2,1,3,4)]
            pval <- t_piece_xq(sm[2], p)
            sq <- names(pos[which(pos == pval)])
            x <- as.integer(substr(sq, 2, 2))

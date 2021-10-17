@@ -5,7 +5,7 @@ Authors@R:
     person("Donald", "Seinen", , "2869830202@qq.com", role = c("aut", "cre"),
            comment = c(ORCID = "YOUR-ORCID-ID"))
 Description: Analyze and viualize xiangqi games. Learning xiangqi.
-License: MIT + file LICENSE
+License: GPL (>= 3)
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)

@@ -41,6 +41,7 @@ read_pgn <- function(path, keep = TRUE){
 #'
 #' @return List of length n games, split by metadata and move list.
 #' TODO add parallel support ?
+#' TODO arbitrary metadata length support
 read_pgn_bulk <- function(path){
   game <- readLines(path)
   game <- stringi::stri_remove_empty(game)

@@ -10,6 +10,7 @@
 #' the Universal Chinese Chess Protocol **UCCI**, that which most xiangqi engines
 #' use as the internal structure.
 #' @export
+#' @seealso \code{\link{translate}}
 #' @examples
 #'position <- moves[1:49] %>% translate_notation("san") %>% clean_moves() %>% position_move()
 position_move <- function(moves, pos = "start"){
