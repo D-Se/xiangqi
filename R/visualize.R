@@ -35,22 +35,21 @@ visualize <- function(ll){
 }
 #scale_y_continuous(trans = ggallin::pseudolog10_trans)
 
-
 symmetric_limits <- function(x) {
   max <- max(abs(x))
   c(-max, max)
 }
 
-
-plot_board <- function(){
-  library(png)
-  library(grid)
-  file.path(file.choose())
-  img <- readPNG("C:\\Users\\D\\Desktop\\Board.png")
-  img <- readPNG(system.file("img", "Rlogo.png", package="png"))
-  g <- rasterGrob(img, interpolate=TRUE)
-
-  qplot(1:10, 1:10, geom="blank") +
-    annotation_custom(g, xmin=-Inf, xmax=Inf, ymin=-Inf, ymax=Inf) +
-    theme_void()
-}
+#' utility for adding a background PNG image
+# plot_board <- function(){
+#   library(png)
+#   library(grid)
+#   file.path(file.choose())
+#   img <- readPNG("C:\\Users\\D\\Desktop\\Board.png")
+#   img <- readPNG(system.file("img", "Rlogo.png", package="png"))
+#   g <- rasterGrob(img, interpolate=TRUE)
+#
+#   qplot(1:10, 1:10, geom="blank") +
+#     annotation_custom(g, xmin=-Inf, xmax=Inf, ymin=-Inf, ymax=Inf) +
+#     theme_void()
+# }

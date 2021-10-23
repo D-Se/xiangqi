@@ -11,6 +11,7 @@
 #' of top top players.
 
 estimate_rating <- function(){
+  ### TODO: implement this metric >>
   # https://sci-hub.se/10.3233/icg-2012-35102
   x <- if (player == 1) {
     df %>%

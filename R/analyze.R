@@ -12,6 +12,13 @@
 #' @param multipv int how many principle variations should be returned
 #'
 #' @returns list of lists. Length n, n equal to number of moves, each move described by 11-element list
+#'
+#'
+#' TODO logic pass - place items outside the loop <hashed fen string>
+#' TODO logic pass - hash table size
+#' TODO vectorize FEN maker
+#' TODO convert "t" to an environment, no copy on modification, less memory use
+#'
 #' @export
 analyze_game <- function(moves, engine, multipv = 1){
   old_loc <- Sys.getlocale(category = "LC_CTYPE")
