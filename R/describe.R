@@ -9,6 +9,7 @@
 #' performance metrics and a tibble of summary statistics.
 #' @export
 #' @family performance metrics
+### TODO: convert to data.table
 describe <- function(game){
   if(length(game) %% 2 == 0) {
     turn <- rep(c("r", "b"), length(game) / 2)
@@ -57,7 +58,7 @@ move_summary <- function(dq, player){
   dq %>%
     dplyr::filter(turn == player) %>%
     dplyr::group_by(perf) %>%
-    tidyr::drop_na() %>%
+    tidyr::drop_na() %>% # when converting to data.table, drop this dependency
     dplyr::summarise(n = dplyr::n())
 }
 
